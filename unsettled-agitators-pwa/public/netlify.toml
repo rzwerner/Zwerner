@@ -1,0 +1,4 @@
+[build]
+  base = ""            # Leave empty or set to relative path if using subdirectories
+  publish = "dist"     # Or "build", "public", etc., depending on your framework
+  command = "npm run build"  # Or your build command
