@@ -1,0 +1,21 @@
+{
+  "name": "Unsettled Agitators",
+  "short_name": "Agitators",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#ef4444",
+  "description": "Forge messages that awaken, compel, and proclaim the Kingdom.",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
