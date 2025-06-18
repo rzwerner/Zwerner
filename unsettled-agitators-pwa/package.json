@@ -1,6 +1,9 @@
-{
+}
   "name": "unsettled-agitators",
   "version": "1.0.0",
+"engines": {
+  "node": "18.18.0"
+}
   "scripts": {
     "dev": "vite",
     "build": "vite build",
