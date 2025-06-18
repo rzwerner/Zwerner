@@ -1,4 +1,6 @@
 [build]
-  base = ""            # Leave empty or set to relative path if using subdirectories
-  publish = "dist"     # Or "build", "public", etc., depending on your framework
-  command = "npm run build"  # Or your build command
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  PYTHON_VERSION = "3.11.8"  # or another currently supported stable version
