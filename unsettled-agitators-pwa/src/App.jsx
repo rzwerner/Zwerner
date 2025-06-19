@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import './style.css';
+import { templates } from './AppTemplates'; // Assume you moved templates to a separate file
 
 export default function App() {
   const [selectedTemplate, setSelectedTemplate] = useState('');
@@ -7,140 +9,110 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Additional States
-  const [sermonTopic, setSermonTopic] = useState('');
-  const [generatedSermonTitle, setGeneratedSermonTitle] = useState('');
-  const [isLoadingSermonTitle, setIsLoadingSermonTitle] = useState(false);
-  const [errorSermonTitle, setErrorSermonTitle] = useState('');
-
-  const [lifeScenario, setLifeScenario] = useState('');
-  const [generatedHebrewsApplication, setGeneratedHebrewsApplication] = useState('');
-  const [isLoadingHebrewsApplication, setIsLoadingHebrewsApplication] = useState(false);
-  const [errorHebrewsApplication, setErrorHebrewsApplication] = useState('');
-
-  // Input Change Handler
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    setTemplateInputs((prevInputs) => ({
-      ...prevInputs,
-      [id]: value,
-    }));
+    setTemplateInputs((prevInputs) => ({ ...prevInputs, [id]: value }));
   };
 
-  // Clipboard Function
-  const copyToClipboard = (content) => {
-    if (content) {
-      const textarea = document.createElement('textarea');
-      textarea.value = content;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-      alert('Content copied to clipboard!');
+  const copyToClipboard = () => {
+    if (generatedContent) {
+      navigator.clipboard.writeText(generatedContent);
+      alert('Copied to clipboard!');
     }
   };
 
-  // Generic API Call
-  const callGeminiApi = async (prompt, setLoading, setError, setOutput) => {
-    setLoading(true);
+  const generateContent = async () => {
+    if (!selectedTemplate || !templates[selectedTemplate]) return;
+
+    const { promptGenerator } = templates[selectedTemplate];
+    const prompt = promptGenerator(templateInputs);
+    setIsLoading(true);
     setError('');
-    setOutput('');
+    setGeneratedContent('');
 
     try {
-      const chatHistory = [{ role: 'user', parts: [{ text: prompt }] }];
-      const payload = { contents: chatHistory };
-      const apiKey = ''; // Add key if needed
+      const apiKey = ''; // add your API key
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+      const payload = {
+        contents: [{ role: 'user', parts: [{ text: prompt }] }]
+      };
 
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
       });
 
       const result = await response.json();
       const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      setOutput(text);
+      setGeneratedContent(text);
     } catch (err) {
       setError('Failed to generate content.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  // Return JSX
-return (
-  <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
-    <h1 className="text-4xl font-bold text-red-600">Unsettled Agitators</h1>
-    <p className="mt-4 text-lg text-gray-700">
-      Select a content template to begin generating.
-    </p>
-  </div>
-);
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <h1 className="text-3xl font-bold mb-6 text-red-600">Unsettled Agitators</h1>
 
-// Templates Object
-export const templates = {
-  '': {
-    name: 'Select a Template',
-    inputs: [],
-  },
-  'problem-solution-action': {
-    name: 'Problem-Solution-Action',
-    inputs: [
-      { id: 'problem', label: 'Core Problem', type: 'textarea' },
-      { id: 'solution', label: 'Core Solution', type: 'textarea' },
-      { id: 'desiredAction', label: 'Desired Action', type: 'textarea' },
-    ],
-    promptGenerator: (inputs) => `
-You are a content creator for "Unsettled Agitators"...
-Core Problem: ${inputs.problem}
-Core Solution: ${inputs.solution}
-Desired Action: ${inputs.desiredAction}
-...
-    `,
-  },
-  'myth-vs-reality': {
-    name: 'Myth vs. Reality',
-    inputs: [
-      { id: 'myth', label: 'Common Myth', type: 'textarea' },
-      { id: 'reality', label: 'Biblical Reality', type: 'textarea' },
-      { id: 'coreEvidence', label: 'Core Biblical Evidence/Reason', type: 'textarea' },
-    ],
-    promptGenerator: (inputs) => `
-Myth: ${inputs.myth}
-Reality: ${inputs.reality}
-Evidence: ${inputs.coreEvidence}
-...
-    `,
-  },
-  'behind-the-scenes': {
-    name: 'Behind-the-Scenes/Day in the Life',
-    inputs: [
-      { id: 'coreActivity', label: 'Core Activity/Process', type: 'textarea' },
-      { id: 'keyInsight', label: 'Key Insight/Lesson Learned', type: 'textarea' },
-    ],
-    promptGenerator: (inputs) => `
-Activity: ${inputs.coreActivity}
-Insight: ${inputs.keyInsight}
-...
-    `,
-  },
-  'curated-list': {
-    name: 'Curated List/Top X',
-    inputs: [
-      { id: 'listTopic', label: 'List Topic', type: 'textarea' },
-      { id: 'items', label: 'List Items (one per line)', type: 'textarea' },
-    ],
-    promptGenerator: (inputs) => `
-Topic: ${inputs.listTopic}
-Items:
-${inputs.items}
+        <label className="block mb-4">
+          <span className="text-gray-700 font-medium">Select Template</span>
+          <select
+            value={selectedTemplate}
+            onChange={(e) => {
+              setSelectedTemplate(e.target.value);
+              setTemplateInputs({});
+              setGeneratedContent('');
+            }}
+            className="mt-1 block w-full p-2 border rounded"
+          >
+            {Object.entries(templates).map(([key, tpl]) => (
+              <option key={key} value={key}>{tpl.name}</option>
+            ))}
+          </select>
+        </label>
 
-Structure:
-Hook: [Start with the topic in a strong hook]
-List: [Enumerate each item with energy and biblical conviction]
-Conclusion/CTA: [Tie back to Kingdom-first purpose]
-Hashtags: #UnsettledAgitators #KingdomGear #TopX
-    `,
-  },
-};
+        {templates[selectedTemplate]?.inputs?.map((input) => (
+          <div key={input.id} className="mb-4">
+            <label className="block mb-1 text-gray-700 font-medium" htmlFor={input.id}>{input.label}</label>
+            <textarea
+              id={input.id}
+              value={templateInputs[input.id] || ''}
+              onChange={handleInputChange}
+              rows="3"
+              className="w-full p-2 border rounded"
+            />
+          </div>
+        ))}
+
+        <button
+          onClick={generateContent}
+          className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          disabled={isLoading || !selectedTemplate}
+        >
+          {isLoading ? 'Generating...' : 'Generate Content'}
+        </button>
+
+        {error && <p className="mt-4 text-red-500">{error}</p>}
+
+        {generatedContent && (
+          <div className="mt-6">
+            <h2 className="text-xl font-semibold mb-2">Generated Content</h2>
+            <pre className="whitespace-pre-wrap bg-gray-100 p-4 border rounded text-sm">
+              {generatedContent}
+            </pre>
+            <button
+              onClick={copyToClipboard}
+              className="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Copy to Clipboard
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
