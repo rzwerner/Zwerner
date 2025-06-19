@@ -31,7 +31,7 @@ export default function App() {
     setGeneratedContent('');
 
     try {
-      const apiKey = ''; // add your API key
+      const apiKey = 'AIzaSyADmYvVENg4gc111BGhsACxAaVK1dyRu0k'; // add your API key
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
       const payload = {
         contents: [{ role: 'user', parts: [{ text: prompt }] }]
