@@ -53,6 +53,14 @@ export default function App() {
     }
   };
 
+  const resetForm = () => {
+    setSelectedTemplate('');
+    setTemplateInputs({});
+    setGeneratedContent('');
+    setIsLoading(false);
+    setError('');
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
@@ -66,6 +74,7 @@ export default function App() {
               setSelectedTemplate(e.target.value);
               setTemplateInputs({});
               setGeneratedContent('');
+              setError('');
             }}
             className="mt-1 block w-full p-2 border rounded"
           >
@@ -88,13 +97,22 @@ export default function App() {
           </div>
         ))}
 
-        <button
-          onClick={generateContent}
-          className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-          disabled={isLoading || !selectedTemplate}
-        >
-          {isLoading ? 'Generating...' : 'Generate Content'}
-        </button>
+        <div className="flex space-x-4 mt-4">
+          <button
+            onClick={generateContent}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            disabled={isLoading || !selectedTemplate}
+          >
+            {isLoading ? 'Generating...' : 'Generate Content'}
+          </button>
+
+          <button
+            onClick={resetForm}
+            className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+          >
+            Reset
+          </button>
+        </div>
 
         {error && <p className="mt-4 text-red-500">{error}</p>}
 
