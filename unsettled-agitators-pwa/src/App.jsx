@@ -69,15 +69,14 @@ export default function App() {
   };
 
   // Return JSX
-  return (
-    <div>
-      {/* UI components go here */}
-
-      {/* Place this inside your return block or route switch appropriately */}
-      {/* <HebrewsApplicationGeneratorComponent /> */}
-    </div>
-  );
-}
+return (
+  <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+    <h1 className="text-4xl font-bold text-red-600">Unsettled Agitators</h1>
+    <p className="mt-4 text-lg text-gray-700">
+      Select a content template to begin generating.
+    </p>
+  </div>
+);
 
 // Templates Object
 export const templates = {
