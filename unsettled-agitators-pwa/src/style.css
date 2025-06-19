@@ -1,11 +1,11 @@
-/* ✅ Place all @import statements first */
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap'); /* at top */
 
-/* Then any Tailwind or custom styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Any custom styles below */
 body {
   font-family: 'Roboto', sans-serif;
 }
